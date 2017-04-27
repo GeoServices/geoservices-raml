@@ -7,16 +7,12 @@
   <link href="styles/api-console-light-theme.css" rel="stylesheet" class="theme">
 </head>
 <body ng-app="ramlConsoleApp" ng-cloak class="raml-console-body">
-  <main>
-    <h2>ArcGIS API Explorer</h2>
-    <ul>
-      <li>
-        <a href="geoservices.html">GeoServices API explorer</a>
-      </li>
-      <li>
-        <a href="portal.html">Portal API explorer</a>
-      </li>
-    </ul>
-    </main>
+  <!-- <raml-initializer></raml-initializer> -->
+  <script src="scripts/api-console-vendor.js"></script>
+  <script src="scripts/api-console.js"></script>
+  <script>
+    $.noConflict();
+  </script>
+  <raml-console src="./examples/geoservices.raml">
   </body>
 </html>

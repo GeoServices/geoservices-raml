@@ -2,19 +2,15 @@
 ---
 title: ArcGIS GeoServices API
 version: 10.3
-baseUri: "{serverUrl}/{layerId}"
+baseUri: "{serverUrl}"
 baseUriParameters:
   serverUrl:
     displayName: Server URL
     type: string
     example: "http://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Education_WebMercator/MapServer"
-  layerId:
-    displayName: Layer Index
-    type: string
-    pattern: ^[0-9]$
-    minLength: 1
-    example: 5
+
 /:
+  description: Get service metadata
   get:
     queryParameters:
       f:
@@ -22,106 +18,123 @@ baseUriParameters:
         type: string
         example: json
         required: true
-/query:
-  get:
-    queryParameters:
-      f:
-        displayName: Format
+  /{layer}:
+    description: Get layer metadata
+    uriParameters:
+      layer:
+        displayName: Layer Index
         type: string
-        example: json
-        required: true
-      where:
-        displayName: Where
-        type: string
-        description: SQL-like filter
-        example: 1=1
-        required: true
-      outFields:
-        displayName: OutFields
-        type: string
-        description: Attributes to be included
-        example: "*"
-        required: true
-      outStatistics:
-        displayName: Output Statistics
-        type: string
-        description: Array of aggregated statistics
-        required: false
-    responses:
-      400:
-        body:
-          application/json:
-            example: |
-              {
-                "error": {
-                  "code": 400,
-                  "message": "Failed to execute query.",
-                  "details": []
-                }
-              }
-      200:
-       body:
-         application/json:
-          schema: |
-              { "$schema": "http://json-schema.org/schema",
-                "type": "object",
-                "description": "A canonical song",
-                "properties": {
-                  "title": { "type": "string" },
-                  "artist": { "type": "string"}
-                },
-                "required": [ "title", "artist" ]
-              }
-          example: |
-              {
-                "displayFieldName": "NAME",
-                "fieldAliases": {
-                  "OBJECTID": "OBJECTID",
-                  "NAME": "NAME",
-                  "ADDRESS": "ADDRESS",
-                  "POPULATION_ENROLLED_2008": "POPULATION_ENROLLED_2008"
-                },
-                "geometryType": "esriGeometryPoint",
-                "spatialReference": {
-                  "wkid": 102100,
-                  "latestWkid": 3857
-                },
-                "fields": [
+        pattern: ^[0-9]$
+        minLength: 1
+        example: 5
+    get:
+      queryParameters:
+        f:
+          displayName: Format
+          type: string
+          example: json
+          required: true
+    /query:
+      description: Get features with filters and aggregated statistics.
+      get:
+        queryParameters:
+          f:
+            displayName: Format
+            type: string
+            example: json
+            required: true
+          where:
+            displayName: Where
+            type: string
+            description: SQL-like filter
+            example: 1=1
+            required: true
+          outFields:
+            displayName: OutFields
+            type: string
+            description: Attributes to be included
+            example: "*"
+            required: true
+          outStatistics:
+            displayName: Output Statistics
+            type: string
+            description: Array of aggregated statistics
+            required: false
+        responses:
+          400:
+            body:
+              application/json:
+                example: |
                   {
-                    "name": "OBJECTID",
-                    "type": "esriFieldTypeOID",
-                    "alias": "OBJECTID"
-                  },
-                  {
-                    "name": "NAME",
-                    "type": "esriFieldTypeString",
-                    "alias": "NAME",
-                    "length": 254
-                  },
-                  {
-                    "name": "ADDRESS",
-                    "type": "esriFieldTypeString",
-                    "alias": "ADDRESS",
-                    "length": 254
-                  },
-                  {
-                    "name": "POPULATION_ENROLLED_2008",
-                    "type": "esriFieldTypeDouble",
-                    "alias": "POPULATION_ENROLLED_2008"
-                  }
-                ],
-                "features": [
-                  {
-                    "attributes": {
-                      "OBJECTID": 1,
-                      "NAME": "Oyster-Adams Bilingual School (Adams)",
-                      "ADDRESS": "2020 19TH STREET NW",
-                      "POPULATION_ENROLLED_2008": null
-                    },
-                    "geometry": {
-                      "x": -8576541.099870069,
-                      "y": 4709834.85171745
+                    "error": {
+                      "code": 400,
+                      "message": "Failed to execute query.",
+                      "details": []
                     }
                   }
-                ]
-              }
+          200:
+           body:
+             application/json:
+              schema: |
+                  { "$schema": "http://json-schema.org/schema",
+                    "type": "object",
+                    "description": "A canonical song",
+                    "properties": {
+                      "title": { "type": "string" },
+                      "artist": { "type": "string"}
+                    },
+                    "required": [ "title", "artist" ]
+                  }
+              example: |
+                  {
+                    "displayFieldName": "NAME",
+                    "fieldAliases": {
+                      "OBJECTID": "OBJECTID",
+                      "NAME": "NAME",
+                      "ADDRESS": "ADDRESS",
+                      "POPULATION_ENROLLED_2008": "POPULATION_ENROLLED_2008"
+                    },
+                    "geometryType": "esriGeometryPoint",
+                    "spatialReference": {
+                      "wkid": 102100,
+                      "latestWkid": 3857
+                    },
+                    "fields": [
+                      {
+                        "name": "OBJECTID",
+                        "type": "esriFieldTypeOID",
+                        "alias": "OBJECTID"
+                      },
+                      {
+                        "name": "NAME",
+                        "type": "esriFieldTypeString",
+                        "alias": "NAME",
+                        "length": 254
+                      },
+                      {
+                        "name": "ADDRESS",
+                        "type": "esriFieldTypeString",
+                        "alias": "ADDRESS",
+                        "length": 254
+                      },
+                      {
+                        "name": "POPULATION_ENROLLED_2008",
+                        "type": "esriFieldTypeDouble",
+                        "alias": "POPULATION_ENROLLED_2008"
+                      }
+                    ],
+                    "features": [
+                      {
+                        "attributes": {
+                          "OBJECTID": 1,
+                          "NAME": "Oyster-Adams Bilingual School (Adams)",
+                          "ADDRESS": "2020 19TH STREET NW",
+                          "POPULATION_ENROLLED_2008": null
+                        },
+                        "geometry": {
+                          "x": -8576541.099870069,
+                          "y": 4709834.85171745
+                        }
+                      }
+                    ]
+                  }

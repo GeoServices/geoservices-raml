@@ -1,0 +1,125 @@
+#%RAML 0.8
+---
+title: ArcGIS Portal API
+version: 10.3
+baseUri: "{portalUrl}"
+baseUriParameters:
+  portalUrl:
+    displayName: Portal URL
+    type: string
+    example: "https://www.arcgis.com/sharing/rest"
+securitySchemes:
+    - oauth_2_0:
+        description: |
+            Dropbox supports OAuth 2.0 for authenticating all API requests.
+        type: OAuth 2.0
+        describedBy:
+            headers:
+                Authorization:
+                    description: |
+                       Used to send a valid OAuth 2 access token. Do not use
+                       with the "access_token" query string parameter.
+                    type: string
+            queryParameters:
+                access_token:
+                    description: |
+                       Used to send a valid OAuth 2 access token. Do not use together with
+                       the "Authorization" header
+                    type: string
+            responses:
+                401:
+                    description: |
+                        Bad or expired token. This can happen if the user or Dropbox
+                        revoked or expired an access token. To fix, you should re-
+                        authenticate the user.
+                403:
+                    description: |
+                        Bad OAuth request (wrong consumer key, bad nonce, expired
+                        timestamp...). Unfortunately, re-authenticating the user won't help here.
+        settings:
+          authorizationUri: https://www.arcgis.com/sharing/rest/oauth2/authorize
+          accessTokenUri: https://www.arcgis.com/sharing/rest/oauth2/token
+          authorizationGrants: [ code, token ]
+resourceTypes:
+  - json:
+      get:
+        queryParameters:
+          f:
+            displayName: Format
+            type: string
+            example: json
+            required: true
+
+/search:
+  description: Search for content, groups, users in portal
+  type: { json: {  } }
+  get:
+    queryParameters:
+      q:
+        displayName: Query
+        type: string
+        required: true
+        example: water
+      start:
+        displayName: Start results at index
+        type: integer
+        minimum: 1
+        default: 1
+        example: 1
+      num:
+        displayName: The maximum number of results to be included in the result set response.
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+        example: 20
+      sortField:
+        displayName: Field to sort by. You can also sort by multiple fields (comma separated) for an item. title, uploaded, type, owner, modified, avgRating, numRatings, numComments, and numViews.
+        type: string
+        example: uploaded
+      sortOrder:
+        displayName: Describes whether the results return in ascending or descending order. asc | desc
+        type: string
+        default: desc
+        example: desc
+/content/items/{item}:
+  description: Get item metadata
+  type: { json: {  } }
+  uriParameters:
+    item:
+      displayName: Item ID
+      type: string
+      minLength: 32
+      example: 2e8512893d4b463fb9ee81ec17d7af07
+  /data:
+    description: Get item data
+    type: { json: {  } }
+  /groups:
+    description: Lists the groups of which the item is a part. Only shows the groups that the calling user can access.
+    type: { json: {  } }
+  /rating:
+    description: Returns the rating given by the current user to the item, if any.
+    type: { json: {  } }
+  /addComment:
+    description: Adds a comment to an item.
+    securedBy: [oauth_2_0]
+    post:
+      queryParameters:
+        comment:
+          displayName: Comment
+          description: Add comment text to item.
+          type: string
+          example: "This is a comment."
+          required: true
+/community/groups/{group}:
+  description: Get group metadata
+  type: { json: {  } }
+  uriParameters:
+    group:
+      displayName: Group ID
+      type: string
+      minLength: 32
+      example: 47261cd6c04b426789babc3f101a4c03
+  /users:
+    description: Get group users
+    type: { json: {  } }
